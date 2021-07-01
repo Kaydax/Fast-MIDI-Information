@@ -335,6 +335,7 @@ void Midi::LoaderThread()
         {
           track->parseEvent(note_event_buffer, &misc_events, &global_poly);
           if(global_poly > max_global_poly) max_global_poly = global_poly;
+          //std::cout << global_poly << std::endl; //Debug
           if(track->time > seconds) seconds = track->time;
           track->parseDeltaTime();
           if(track->ended)
@@ -546,7 +547,7 @@ double MidiTrack::multiplierFromTempo(uint32_t tempo, uint16_t ppq)
   return tempo / 1000000.0 / ppq;
 }
 
-void MidiTrack::parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_note_events, moodycamel::ReaderWriterQueue<MidiEvent>* global_misc, uint32_t* global_poly)
+void MidiTrack::parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_note_events, moodycamel::ReaderWriterQueue<MidiEvent>* global_misc, uint64_t* global_poly)
 {
   bool stage_2 = global_note_events != nullptr;
   if(ended)
@@ -575,7 +576,7 @@ void MidiTrack::parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_not
         {
           reader->readByte();
           reader->readByte();
-          (*global_poly)--;
+          if((*global_poly) != 0) (*global_poly)--;
           break;
         }
         else
@@ -596,7 +597,7 @@ void MidiTrack::parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_not
           }
           else
           {
-            (*global_poly)--;
+            if((*global_poly) != 0) (*global_poly)--;
           }
           break;
         }

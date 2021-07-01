@@ -104,7 +104,7 @@ class MidiTrack
     ~MidiTrack();
     void parseDelta();
     void parseDeltaTime();
-    void parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_note_events, moodycamel::ReaderWriterQueue<MidiEvent>* global_misc, uint32_t* global_poly);
+    void parseEvent(moodycamel::ReaderWriterQueue<NoteEvent>** global_note_events, moodycamel::ReaderWriterQueue<MidiEvent>* global_misc, uint64_t* global_poly);
 
     bool ended = false;
     bool delta_parsed = false;
@@ -139,10 +139,10 @@ class Midi
     uint32_t tempo_count;
     std::atomic<float> renderer_time;
     uint32_t track_count;
-    uint32_t global_poly;
-    uint32_t max_global_poly = 0;
     uint64_t note_count;
     uint64_t notes_played = 0;
+    uint64_t global_poly = 0;
+    uint64_t max_global_poly = 0;
     double song_len = 0.0;
     bool loader_done = false;
   private:
